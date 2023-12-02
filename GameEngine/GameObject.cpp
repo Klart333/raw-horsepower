@@ -1,14 +1,12 @@
 #include "GameObject.h"
 #include "Transform.h"
+#include "Image.h"
 
-GameObject::GameObject(): Image(nullptr), Collider(nullptr)
+GameObject::GameObject(class Transform* InTransform, class Image* InImage):
+    Image(InImage), Transform(InTransform), Collider(nullptr)
 {
-    Transform = new class Transform(0, 0, 100, 100);
 }
 
 void GameObject::Update(const float deltaTime)
 {
-    
 }
-
-

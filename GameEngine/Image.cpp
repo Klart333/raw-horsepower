@@ -1,6 +1,8 @@
 #include "Image.h"
 
+#include "Dependencies.h"
 #include "IImageLoader.h"
+#include "Spawner.h"
 
 Image::Image()
 {
@@ -8,9 +10,9 @@ Image::Image()
     renderOrder = 0;
 }
 
-Image::Image(const char* path, IImageLoader* image_loader, int rendOrder)
+Image::Image(const char* path, int rendOrder)
 {
-    texture = image_loader->LoadImage(path);
+    texture = Dependencies::instance()->Spawner->image_loader->LoadImage(path);
     renderOrder = rendOrder;
 }
 

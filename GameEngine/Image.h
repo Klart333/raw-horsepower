@@ -11,7 +11,7 @@ public:
     
     virtual ~Image() = default;
     Image();
-    Image(const char* path, IImageLoader* image_loader, int rendOrder = 0);
+    Image(const char* path, int rendOrder = 0);
 
     [[nodiscard]] SDL_Texture* getTexture() const; // i dont know what nodiscard is 
 };

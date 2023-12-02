@@ -1,4 +1,7 @@
 #pragma once
+// #include "Collider.h"
+// #include "Transform.h"
+
 
 class Collider;
 class Transform;
@@ -13,7 +16,7 @@ public:
     Transform* Transform;
     Collider* Collider;
 
-    GameObject();
+    GameObject(class Transform* InTransform, class Image* InImage);
 
     virtual void Update(const float deltaTime);
     

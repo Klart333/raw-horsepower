@@ -12,25 +12,26 @@ class GameObject;
 
 class Spawner
 {
-    IImageLoader* image_loader; 
     IDisplayWindow* display_window;
     
 public:
     Spawner();
 
+    IImageLoader* image_loader; 
+    
     void InitializeGameState(IImageLoader*, IDisplayWindow*);
 
     Image* get_image(const char* filePath, int renderOrder = 0) const;
     Text* get_text(const char* textString, const char* fontPath, Uint8 r = 255, Uint8 g = 255, Uint8 b = 255) const;
 
     template<typename T>
-    static T* Instantiate(); 
+    static T* Instantiate(Transform* InTransform, Image* InImage); 
 };
 
 template<typename T>
-T* Spawner::Instantiate()
+T* Spawner::Instantiate(Transform* InTransform, Image* InImage)
 {
-    T* object = new T();
+    T* object = new T(InTransform, InImage);
     
     Dependencies::instance()->GameManager->AddGameObject(object);
     

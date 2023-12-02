@@ -11,7 +11,7 @@ class Pikachu : public GameObject
     Cell* CurrentCell;
     
 public:
-    Pikachu();
+    Pikachu(class Transform* InTransform, class Image* InImage);
     void UpdateCurrentCell();
     void Update(float deltaTime) override;
 
