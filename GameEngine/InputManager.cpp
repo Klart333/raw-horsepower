@@ -1,4 +1,5 @@
 #include "InputManager.h"
+
 #include <SDL_events.h>
 
 InputManager::InputManager()
@@ -6,6 +7,7 @@ InputManager::InputManager()
     Quit = false;
     Horizontal = 0;
     Vertical = 0;
+    OnMouseClicked = JohnsArray<FuncAndInstance>();
 }
 
 void InputManager::Update()
@@ -16,24 +18,39 @@ void InputManager::Update()
     while (SDL_PollEvent(&e))
     {
         // check, if it's an event we want to react to:
-        switch (e.type) {
-        case SDL_QUIT: {
+        switch (e.type)
+        {
+            case SDL_QUIT:
+            {
                 Quit = true;
-        } break;
-
-            // This is an example on how to use input events:
-            case SDL_KEYDOWN: {
-                    // input example: if left, then make pikachu move left
-                    if (e.key.keysym.sym == SDLK_LEFT) {
-					
-                    }
-                    // if right, then make pikachu move right
-                    if (e.key.keysym.sym == SDLK_RIGHT) {
-					
-                    }
             } break;
-        default:
-            break;
+            
+            // This is an example on how to use input events:
+            case SDL_KEYDOWN:
+            {
+                // input example: if left, then make pikachu move left
+                if (e.key.keysym.sym == SDLK_LEFT)
+                {
+				
+                }
+                // if right, then make pikachu move right
+                if (e.key.keysym.sym == SDLK_RIGHT)
+                {
+				
+                }
+            } break;
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                if (e.button.button == 1)
+                {
+                    for (int i = 0; i < OnMouseClicked.count; i++)
+                    {
+                        OnMouseClicked.Array[i]->func(OnMouseClicked.Array[i]->userData);
+                    }
+                }
+            }
+            default:
+                break;
         }
     }
 
@@ -58,3 +75,9 @@ void InputManager::Update()
         Horizontal = -1;
     }
 }
+
+void InputManager::AddFunctionPointerToMouseButtonClicked(::CallBackFunction* callback, void* userData)
+{
+    OnMouseClicked.Add(new FuncAndInstance(callback, userData));
+}
+

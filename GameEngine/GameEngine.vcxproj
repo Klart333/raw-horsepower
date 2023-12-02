@@ -38,6 +38,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ISDLImageLoader.cpp" />
     <ClCompile Include="ISDLWindow.cpp" />
+    <ClCompile Include="JohnsArray.cpp" />
     <ClCompile Include="Pikachu.cpp" />
     <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ISDLImageLoader.h" />
     <ClInclude Include="ISDLWindow.h" />
+    <ClInclude Include="JohnsArray.h" />
     <ClInclude Include="Pikachu.h" />
     <ClInclude Include="Spawner.h" />
     <ClInclude Include="Text.h" />

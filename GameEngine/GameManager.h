@@ -1,16 +1,16 @@
 #pragma once
+#include "JohnsArray.h"
 
 class GameObject;
 
 class GameManager
 {
-    int capacity;
     
 public:
-    int count;
-    GameObject** GameObjects;
+    JohnsArray<GameObject> GameObjects;
     
     GameManager();
     ~GameManager();
     void AddGameObject(GameObject* object); 
 };
+

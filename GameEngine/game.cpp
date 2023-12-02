@@ -32,11 +32,11 @@ int main(int argc, char* args[])
 		quit = Dependencies::instance()->InputManager->Quit;
 		
 		// Run Update On All GameObjects
-		GameObject** gameObjects = Dependencies::instance()->GameManager->GameObjects;
-		const int count = Dependencies::instance()->GameManager->count;
+		const JohnsArray<GameObject> gameObjects = Dependencies::instance()->GameManager->GameObjects;
+		const int count = Dependencies::instance()->GameManager->GameObjects.count;
 		for	(int i = 0; i < count; i++)
 		{
-			gameObjects[i]->Update(deltaTime);
+			gameObjects.Array[i]->Update(deltaTime);
 		}
 
 		// clear the screen
@@ -48,9 +48,9 @@ int main(int argc, char* args[])
 		{
 			for	(int i = 0; i < count; i++)
 			{
-				if (gameObjects[i]->Image->renderOrder == layer)
+				if (gameObjects.Array[i]->Image->renderOrder == layer)
 				{
-					window.render(gameObjects[i]);
+					window.render(gameObjects.Array[i]);
 				}
 			}
 		}

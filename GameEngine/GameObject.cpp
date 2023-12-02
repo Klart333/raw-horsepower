@@ -1,5 +1,4 @@
 #include "GameObject.h"
-
 GameObject::GameObject(): Image(nullptr), Transform(nullptr)
 {
 }

@@ -7,6 +7,7 @@ class Font
 public:
     Font(const char* fontPath);
 
+    [[nodiscard]]
     TTF_Font* getFont() const
     {
         return font;

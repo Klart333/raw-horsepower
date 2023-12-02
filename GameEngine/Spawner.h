@@ -24,14 +24,14 @@ public:
     Text* get_text(const char* textString, const char* fontPath, Uint8 r = 255, Uint8 g = 255, Uint8 b = 255) const;
 
     template<typename T>
-    static GameObject* Instantiate(); 
+    static T* Instantiate(); 
 };
 
 template<typename T>
-GameObject* Spawner::Instantiate()
+T* Spawner::Instantiate()
 {
-    GameObject* object = new T();
-
+    T* object = new T();
+    
     Dependencies::instance()->GameManager->AddGameObject(object);
     
     return object;
