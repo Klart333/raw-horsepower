@@ -35,6 +35,24 @@ void Transform::Move(Vector2 vector)
     rect->y = static_cast<int>(PosY);
 }
 
+void Transform::SetPosition(float x, float y)
+{
+    this->PosX = x;
+    this->PosY = y;
+
+    rect->x = static_cast<int>(PosX);
+    rect->y = static_cast<int>(PosY);
+}
+
+void Transform::SetPosition(Vector2 pos)
+{
+    this->PosX += pos.x;
+    this->PosY += pos.y;
+
+    rect->x = static_cast<int>(PosX);
+    rect->y = static_cast<int>(PosY);
+}
+
 void Transform::SetScale(int width, int height)
 {
     this->Width = width;

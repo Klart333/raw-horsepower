@@ -17,6 +17,8 @@ public:
 
     void Move(float x, float y);
     void Move(Vector2 vector);
+    void SetPosition(float x, float y);
+    void SetPosition(Vector2 pos);
     void SetScale(int width, int height);
 
     SDL_Rect* getRect() const;

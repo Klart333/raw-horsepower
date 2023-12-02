@@ -22,14 +22,15 @@ void Spawner::InitializeGameState(IImageLoader* imageLoader, IDisplayWindow* dis
     // All data related to pikachu
     GameObject* Pickachu = Spawner::Instantiate<Pikachu>();
     Pickachu->Image = get_image(pikachuImagePath, 1);
-    Pickachu->Transform = new Transform(0, 0, 200, 200);
+    Pickachu->Transform->SetScale(200, 200);
 
     // create text from font
     Text* text = get_text("lazy blah blah", "font/lazy.ttf", 255, 255, 255);
 
     GameObject* TextObject = Spawner::Instantiate<GameObject>();
     TextObject->Image = text;
-    TextObject->Transform = new Transform(200, 400, text->textWidth, text->textHeight);
+    TextObject->Transform->SetPosition(200, 400);
+    TextObject->Transform->SetScale(text->textWidth, text->textHeight);
 }
 
 Image* Spawner::get_image(const char* filePath, const int renderOrder) const

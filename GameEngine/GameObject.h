@@ -1,5 +1,6 @@
 #pragma once
 
+class Collider;
 class Transform;
 class Image;
 
@@ -10,6 +11,7 @@ public:
     
     Image* Image;
     Transform* Transform;
+    Collider* Collider;
 
     GameObject();
 

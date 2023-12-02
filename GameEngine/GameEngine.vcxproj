@@ -27,6 +27,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="Dependencies.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="game.cpp" />
@@ -46,6 +48,8 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="Dependencies.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameManager.h" />

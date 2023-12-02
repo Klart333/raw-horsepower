@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 
 struct Vector2
 {
@@ -31,5 +32,31 @@ struct Vector2
         old.x += vec.x;
         old.y += vec.y;
         return old;
+    }
+
+    Vector2 operator-(const Vector2 vec) const
+    {
+        Vector2 old = *this;
+        old.x -= vec.x;
+        old.y -= vec.y;
+        return old;
+    }
+
+    float Magnitude()
+    {
+        float length = sqrt(x * x + y * y);
+        return length;
+    }
+
+    Vector2 Normalize()
+    {
+        float mag = Magnitude();
+        if (mag <= 0)
+        {
+            return *this;
+        }
+        this->y = y / mag;
+        this->x = x / mag;
+        return *this;
     }
 };
