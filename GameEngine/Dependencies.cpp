@@ -1,5 +1,6 @@
 #include "Dependencies.h"
 #include "GameManager.h"
+#include "Grid.h"
 #include "InputManager.h"
 #include "Spawner.h"
 
@@ -13,6 +14,7 @@ Dependencies* Dependencies::instance()
         _instance->GameManager = new class GameManager();
         _instance->InputManager = new class InputManager();
         _instance->Spawner = new class Spawner();
+        _instance->Grid = new class Grid();
     }
     
     return _instance;

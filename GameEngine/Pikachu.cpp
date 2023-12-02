@@ -2,8 +2,10 @@
 
 #include <cmath>
 
+#include "Cell.h"
 #include "Collider.h"
 #include "Dependencies.h"
+#include "Grid.h"
 #include "InputManager.h"
 #include "Spawner.h"
 #include "Transform.h"
@@ -12,20 +14,40 @@ const char* charmanderImagePath{ "img/charmander.png" };
 
 Pikachu::Pikachu()
 {
+    CurrentCell = nullptr;
     velocity = Vector2(0, 0);
     Dependencies::instance()->InputManager->AddFunctionPointerToMouseButtonClicked(&Pikachu::CallbackFunction, this);
-
+    
     this->Collider = new class Collider(this->Transform);
+}
+
+void Pikachu::UpdateCurrentCell()
+{
+    int x = round(Transform->PosX / CellSize);
+    int y = round(Transform->PosY / CellSize);
+    CurrentCell = Dependencies::instance()->Grid->TheGrid[x][y];
 }
 
 void Pikachu::Update(const float deltaTime)
 {
     GameObject::Update(deltaTime);
 
+    UpdateCurrentCell();
+
     velocity = velocity * std::pow(0.01f, deltaTime);
 
-    const int x = Dependencies::instance()->InputManager->Horizontal;
-    const int y = Dependencies::instance()->InputManager->Vertical;
+    int x = Dependencies::instance()->InputManager->Horizontal;
+    int y = Dependencies::instance()->InputManager->Vertical;
+
+    const int gridIndexX = CurrentCell->X + x;
+    const int gridIndexY = CurrentCell->Y + y;
+    if (!Dependencies::instance()->Grid->TheGrid[gridIndexX][gridIndexY]->Walkable)
+    {
+        x = 0;
+        y = 0;
+        velocity = velocity * 0;
+    }
+        
     velocity = velocity + Vector2(static_cast<float>(x), static_cast<float>(y)); 
     
     Transform->Move(velocity * deltaTime * 1);

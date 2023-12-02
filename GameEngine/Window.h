@@ -1,4 +1,5 @@
 #pragma once
+#include "Cell.h"
 #include "Image.h"
 #include "SDL.h"
 
@@ -25,6 +26,7 @@ public:
     ~Window();
     bool wasSuccessful() const { return success; }
     void render(GameObject* gameObject);
+    void render(Cell* cell);
     void clear() const;
     void present();
 };

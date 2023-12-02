@@ -3,6 +3,7 @@
 class Spawner;
 class InputManager;
 class GameManager;
+class Grid;
 
 class Dependencies
 {
@@ -12,6 +13,7 @@ public:
     GameManager* GameManager;
     InputManager* InputManager;
     Spawner* Spawner;
+    Grid* Grid;
 
     static Dependencies* instance(); 
 };

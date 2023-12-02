@@ -6,6 +6,7 @@
 #include "GameManager.h"
 #include "ISDLWindow.h"
 #include "GameObject.h"
+#include "Grid.h"
 #include "Spawner.h"
 #include "Window.h"
 
@@ -20,6 +21,7 @@ int main(int argc, char* args[])
 	Window window = Window(sdlWindow, imageLoader);
 
 	Dependencies::instance()->Spawner->InitializeGameState(imageLoader, sdlWindow);
+	Dependencies::instance()->Grid->GenerateGrid();
 	
 	bool quit = false;
 	Uint32 lastFrameTicks = 0;
@@ -46,6 +48,15 @@ int main(int argc, char* args[])
 
 		// clear the screen
 		window.clear();
+
+		// Render the Grid
+		for (int x = 0; x < GridX; x++)
+		{
+			for (int y = 0; y < GridY; y++)
+			{
+				window.render(Dependencies::instance()->Grid->TheGrid[x][y]);
+			}
+		}
 		
 		// Render all GameObjects
 		for (int layer = 0; layer < 4; layer++)	// Ooo ok I just had an idea, I need to order the rendering after the renderOrder on the images and I thought I would have to make a copy and quicksort it.
