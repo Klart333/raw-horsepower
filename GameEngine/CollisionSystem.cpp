@@ -1,7 +1,5 @@
 #include "CollisionSystem.h"
 
-#include <cstdio>
-
 #include "GameObject.h"
 #include "JohnsArray.h"
 #include "Transform.h"
@@ -35,6 +33,7 @@ void CollisionSystem::Update(const JohnsArray<GameObject>* gameObjects)
                 const Vector2 otherMidPoint = Vector2(otherGuy->PosX + otherGuy->Width / 2.0f, otherGuy->PosY + otherGuy->Height);
                 Vector2 direction = midPoint - otherMidPoint;
                 direction = direction.Normalize();
+                direction = direction.Round();
                 
                 bigGuy->Move(direction);
             }

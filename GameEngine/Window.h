@@ -15,7 +15,7 @@ class Window
     SDL_Surface* screenSurface{};
     
     //Whether Window Startup was successful
-    bool success; // Why would I care about this, if it failed it failed there's nothing to do. It's like building a bunker you're just admitting defeat
+    bool success; // Why would I care about this, if it failed it failed there's nothing to do. 
     
     // dependency to the ImageLoader
     IImageLoader* imageLoader;

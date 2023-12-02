@@ -10,7 +10,7 @@ public:
     Pikachu();
     void Update(float deltaTime) override;
 
-    void Shoot();
+    void Shoot() const;
 
     static void CallbackFunction(void* userData)
     {

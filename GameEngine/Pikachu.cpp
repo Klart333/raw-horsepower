@@ -31,7 +31,7 @@ void Pikachu::Update(const float deltaTime)
     Transform->Move(velocity * deltaTime * 1);
 }
 
-void Pikachu::Shoot()
+void Pikachu::Shoot() const
 {
     //velocity = velocity * 2;
 

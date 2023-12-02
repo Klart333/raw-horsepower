@@ -42,21 +42,29 @@ struct Vector2
         return old;
     }
 
-    float Magnitude()
+    [[nodiscard]]
+    float Magnitude() const
     {
-        float length = sqrt(x * x + y * y);
+        const float length = sqrt(x * x + y * y);
         return length;
     }
 
     Vector2 Normalize()
     {
-        float mag = Magnitude();
+        const float mag = Magnitude();
         if (mag <= 0)
         {
             return *this;
         }
         this->y = y / mag;
         this->x = x / mag;
+        return *this;
+    }
+
+    Vector2 Round()
+    {
+        this->y = round(y);
+        this->x = round(x);
         return *this;
     }
 };
