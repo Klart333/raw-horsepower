@@ -27,6 +27,8 @@ int main(int argc, char* args[])
 	Uint32 lastFrameTicks = 0;
 	while (!quit)
 	{
+		Dependencies::instance()->Grid->Iterate();
+		
 		const Uint32 ticks = SDL_GetTicks(); // can be used to see how much time in ms has passed since app start
 		const float deltaTime = (ticks - lastFrameTicks) / 1000.0f;
 		lastFrameTicks = ticks;
@@ -54,7 +56,22 @@ int main(int argc, char* args[])
 		{
 			for (int y = 0; y < GridY; y++)
 			{
-				window.render(Dependencies::instance()->Grid->TheGrid[x][y]);
+				if (Dependencies::instance()->Grid->TheGrid[x][y] != nullptr)
+				{
+					window.render(Dependencies::instance()->Grid->TheGrid[x][y]);
+				}
+				else
+				{
+					const int size = Dependencies::instance()->Grid->NotTheGrid[x][y]->CellPossibilities.size();
+					const int sqrtSize = sqrt(size) + 1;
+					for (int i = 0; i < size; i++)
+					{
+						const Tile* element = Dependencies::instance()->Grid->NotTheGrid[x][y]->CellPossibilities[i]; 
+						SDL_Texture* imag = imageLoader->LoadImage(element->ImagePath);
+						const SDL_Rect* rect = new SDL_Rect(x * CellSize + (i % sqrtSize) * CellSize / sqrtSize, y * CellSize + floor(i / sqrtSize) * CellSize / sqrtSize, CellSize / sqrtSize, CellSize / sqrtSize);
+						window.render(imag, rect, element->Angle);
+					}
+				}
 			}
 		}
 		
@@ -73,7 +90,7 @@ int main(int argc, char* args[])
 		// present screen (switch buffers)
 		SDL_RenderPresent(sdlWindow->get_Renderer());
 
-		SDL_Delay(0); // can be used to wait for a certain amount of ms
+		SDL_Delay(20); // can be used to wait for a certain amount of ms
 	}
 
 	delete sdlWindow;

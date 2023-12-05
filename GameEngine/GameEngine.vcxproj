@@ -70,6 +70,7 @@
     <ClInclude Include="Text.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector2Int.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,15 +3,7 @@
 template<typename T>
 struct JohnsArray
 {
-    JohnsArray(int capacity, int count, T** array)
-        : capacity(capacity),
-          count(count),
-          Array(array)
-    {
-    }
-
     JohnsArray();
-    ~JohnsArray();
     JohnsArray(int capacity);
 
 private:
@@ -21,8 +13,17 @@ public:
     int count;
     T** Array;
 
+    bool Contains(T* object);
+    void SetTo(T* object);
+    JohnsArray<T> ShallowCopy();
+    
     void Add(T* object);
+    void AddAt(T* object, int index);
+    
+    void RemoveAt(int index);
+    void RemoveAtButIDontCareAboutOrder(int index);
 };
+
 
 template <typename T>
 JohnsArray<T>::JohnsArray()
@@ -33,12 +34,26 @@ JohnsArray<T>::JohnsArray()
 }
 
 template <typename T>
-JohnsArray<T>::~JohnsArray()
+void JohnsArray<T>::SetTo(T* object)
 {
-    if (Array != nullptr)
+    delete [] Array;
+
+    Array = new T*[1];
+    Array[0] = object;
+    count = 1;
+    capacity = 1;
+}
+
+template <typename T>
+JohnsArray<T> JohnsArray<T>::ShallowCopy()
+{
+    JohnsArray array = JohnsArray(count);
+    for (int i = 0; i < count; i++)
     {
-        //delete[] Array;
+        array.Add(Array[i]);
     }
+
+    return array;
 }
 
 template <typename T>
@@ -47,6 +62,20 @@ JohnsArray<T>::JohnsArray(const int cap)
     Array = new T*[cap];
     capacity = cap;
     count = 0;
+}
+
+template <typename T>
+bool JohnsArray<T>::Contains(T* object)
+{
+    for (int i = 0; i < count; i++)
+    {
+        if (*Array[i] == *object)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 template <typename T>
@@ -70,4 +99,32 @@ void JohnsArray<T>::Add(T* object)
 
     Array[count] = object;
     count++;
+}
+
+
+
+template <typename T>
+void JohnsArray<T>::AddAt(T* object, int index) // OK ONLY USE IF YOU KNOW WHAT YOURE DOING IT PROBABLY WONT WORK AS YOU WANT IT TO!
+{
+    if (index < 0 || index >= capacity)
+    {
+        //printf("fuck off dude");
+        return;
+    }
+
+    Array[index] = object;
+    count++;
+}
+
+template <typename T>
+void JohnsArray<T>::RemoveAt(int index)
+{
+    Array[index] = nullptr; // Yeah... its not super advanced, basically we lost some memory...
+}
+
+template <typename T>
+void JohnsArray<T>::RemoveAtButIDontCareAboutOrder(int index)
+{
+    Array[index] = Array[count - 1]; // looooool
+    count--; 
 }

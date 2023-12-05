@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr int CellSize = 100;
+constexpr int CellSize = 50;
 
 class Image;
 struct Cell
@@ -9,7 +9,7 @@ private:
    struct SDL_Rect* rect;
    
 public:
-    Image* Image;
+    const Image* Image;
     bool Walkable;
 
     int X;
@@ -20,7 +20,7 @@ public:
        Walkable = true;
    }
 
-    Cell(bool walkable, class Image* img, int x, int y): rect(nullptr)
+    Cell(bool walkable, const class Image* img, int x, int y): rect(nullptr)
    {
        Walkable = walkable;
        Image = img;

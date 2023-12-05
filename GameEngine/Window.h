@@ -25,8 +25,9 @@ public:
     Window(IDisplayWindow* displayWindow, IImageLoader* imageLoader);
     ~Window();
     bool wasSuccessful() const { return success; }
-    void render(GameObject* gameObject);
-    void render(Cell* cell);
+    void render(GameObject* gameObject) const;
+    void render(Cell* cell) const;
+    void render(SDL_Texture* img, const SDL_Rect* rect, int angle) const;
     void clear() const;
     void present();
 };
