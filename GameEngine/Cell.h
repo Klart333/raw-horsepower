@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr int CellSize = 50;
+constexpr int CellSize = 15;
 
 class Image;
 struct Cell

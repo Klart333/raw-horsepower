@@ -1,8 +1,8 @@
 #pragma once
 
+#include <set>
 #include <stack>
 #include <string>
-#include <utility>
 #include <vector>
 #include "Vector2Int.h"
 
@@ -14,11 +14,17 @@ struct Tile
     {
     }
 
-    std::string SideKeys[4]{};
-    int Angle = 0;
-    const char* ImagePath;
+    // Both just used for debuging
+    struct SDL_Rect* StupidRect{};
+    struct SDL_Texture* StupidImage{};
 
-    Tile(const std::string up, const std::string& left, const std::string& down, const std::string& right, const char* path, const int angle)
+    std::string SideKeys[4]{};
+    const char* ImagePath;
+    
+    int Weight = 0;
+    int Angle = 0;
+
+    Tile(const std::string up, const std::string& left, const std::string& down, const std::string& right, const char* path, const int angle, const int weight)
     {
         SideKeys[0] = up;
         SideKeys[1] = left;
@@ -26,7 +32,8 @@ struct Tile
         SideKeys[3] = right;
         
         Angle = angle;
-
+        Weight = weight;
+        
         ImagePath = path;
     }
 };
@@ -46,8 +53,8 @@ struct TileCell
     }
 };
 
-constexpr int GridX = 16;
-constexpr int GridY = 9;
+constexpr int GridX = 64;
+constexpr int GridY = 44;
 
 class Grid
 {
@@ -66,10 +73,12 @@ public:
     [[nodiscard]] Vector2Int GetLowestEntropy() const;
     void CollapseTile(int x, int y) const;
     void SetCell(int x, int y, Tile* Tile);
+    static bool OnlyOpenAt(const TileCell* changedCell);
+    int GetAmountOpenAdjecentTiles(const Vector2Int& vector2_int) const;
     void Propogate();
     static std::vector<Vector2Int> ValidDirections(const Vector2Int& index);
     bool Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, const Vector2Int& direction) const;
-    static bool CheckValidSocket(const std::string& key, const std::vector<std::string>& validKeys);
+    static bool CheckValidSocket(const std::string& key, const std::set<std::string>& validKeys);
 
     static bool ContainsKey(const std::vector<std::string>& array, const std::string& key);
     void GenerateGrid();

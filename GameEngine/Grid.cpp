@@ -1,26 +1,30 @@
 #include <ctime>
 #include "Grid.h"
+
+#include <set>
+
 #include "Cell.h"
 #include "Dependencies.h"
 #include "Spawner.h"
 
 Grid::Grid()
 {
-    TileArray = std::vector<Tile*>(32);
-    TileArray[0 ] = new Tile("0s", "0s", "0s", "0s", "img/WFC/0_Open.png",             0); 
-    TileArray[4 ] = new Tile("1s", "1s", "1s", "1s", "img/WFC/1_Wall.png",             0);
-    TileArray[8 ] = new Tile("2" , "1s", "2f", "0s", "img/WFC/2_SideWall.png",         0);
-    TileArray[12] = new Tile("2" , "2f", "0s", "0s", "img/WFC/3_WallCorner.png",       0);
-    TileArray[16] = new Tile("2" , "1s", "1s", "2f", "img/WFC/4_DumbCorner.png",       0);
-    TileArray[20] = new Tile("0s", "3s", "0s", "0s", "img/WFC/6_WallSuperCorner.png",  0);  
-    TileArray[24] = new Tile("3s", "0s", "3s", "0s", "img/WFC/7_DoubleWall.png",       0); 
-    TileArray[28] = new Tile("3s", "3s", "3s", "3s", "img/WFC/8_SuperSuperCorner.png", 0);
+    TileArray = std::vector<Tile*>(36);
+    TileArray[0 ] = new Tile("0s", "0s", "0s", "0s", "img/WFC/00_Open.png",               0, 10); 
+    TileArray[4 ] = new Tile("1s", "1s", "1s", "1s", "img/WFC/01_Wall.png",               0, 3);
+    TileArray[8 ] = new Tile("2" , "1s", "2f", "0s", "img/WFC/02_SideWall.png",           0, 5);
+    TileArray[12] = new Tile("2" , "2f", "0s", "0s", "img/WFC/03_WallCorner.png",         0, 5);
+    TileArray[16] = new Tile("2" , "1s", "1s", "2f", "img/WFC/04_DumbCorner.png",         0, 3);
+    TileArray[20] = new Tile("0s", "3s", "0s", "0s", "img/WFC/06_WallSuperCorner.png",    0, 5);  
+    TileArray[24] = new Tile("3s", "0s", "3s", "0s", "img/WFC/07_DoubleWall.png",         0, 4); 
+    TileArray[28] = new Tile("3s", "3s", "3s", "3s", "img/WFC/08_SuperSuperCorner.png",   0, 4);
+    TileArray[32] = new Tile("2f", "3s", "2" , "1s", "img/WFC/09_PartialSuperCorner.png", 0, 3);
 
-    for (int i = 0; i <= 7 * 4; i+= 4)
+    for (int i = 0; i <= 8 * 4; i+= 4)
     {
-        TileArray[i + 3] = new Tile(TileArray[i]->SideKeys[1], TileArray[i]->SideKeys[2], TileArray[i]->SideKeys[3], TileArray[i]->SideKeys[0], TileArray[i]->ImagePath, 90);
-        TileArray[i + 2] = new Tile(TileArray[i]->SideKeys[2], TileArray[i]->SideKeys[3], TileArray[i]->SideKeys[0], TileArray[i]->SideKeys[1], TileArray[i]->ImagePath, 180);
-        TileArray[i + 1] = new Tile(TileArray[i]->SideKeys[3], TileArray[i]->SideKeys[0], TileArray[i]->SideKeys[1], TileArray[i]->SideKeys[2], TileArray[i]->ImagePath, 270 );
+        TileArray[i + 3] = new Tile(TileArray[i]->SideKeys[1], TileArray[i]->SideKeys[2], TileArray[i]->SideKeys[3], TileArray[i]->SideKeys[0], TileArray[i]->ImagePath, 90 , TileArray[i]->Weight);
+        TileArray[i + 2] = new Tile(TileArray[i]->SideKeys[2], TileArray[i]->SideKeys[3], TileArray[i]->SideKeys[0], TileArray[i]->SideKeys[1], TileArray[i]->ImagePath, 180, TileArray[i]->Weight);
+        TileArray[i + 1] = new Tile(TileArray[i]->SideKeys[3], TileArray[i]->SideKeys[0], TileArray[i]->SideKeys[1], TileArray[i]->SideKeys[2], TileArray[i]->ImagePath, 270, TileArray[i]->Weight);
     }
 
     for (int x = 0; x < GridX; x++)
@@ -73,6 +77,13 @@ void Grid::Iterate()
     SetCell(index.X, index.Y, NotTheGrid[index.X][index.Y]->CollapsedTile);
 
     Propogate();
+
+    if (collapsedCount >= GridX * GridY)
+    {
+        // Clear memory
+
+        TileArray.clear();
+    }
 }
 
 Vector2Int Grid::GetLowestEntropy() const
@@ -83,20 +94,40 @@ Vector2Int Grid::GetLowestEntropy() const
     {
         for (int y = 0; y < GridY; y++)
         {
-            if (NotTheGrid[x][y]->Collapsed)
+            const int size = NotTheGrid[x][y]->CellPossibilities.size();
+
+            if (NotTheGrid[x][y]->Collapsed || size >= 36)
             {
                 continue;
             }
-            
-            if (NotTheGrid[x][y]->CellPossibilities.size() < smallest)
+
+            float entropy = 0;
+            //int totalWeight = 0;
+            //for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
+            //{
+            //    totalWeight += CellPossibilitie->Weight;
+            //}
+
+            //for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
+            //{
+            //    entropy += 1.0f - ((CellPossibilitie->Weight - 1.0f) / totalWeight);
+
+            //}
+
+            for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
             {
-                smallest = NotTheGrid[x][y]->CellPossibilities.size();
+                entropy -= CellPossibilitie->Weight / size;
+            }
+            
+            if (entropy < smallest)
+            {
+                smallest = entropy;
                 index.X = x;
                 index.Y = y;
                 continue;
             }
 
-            if (NotTheGrid[x][y]->CellPossibilities.size() == smallest && rand() % 100 > 95)
+            if (entropy == smallest && rand() % 100 > 95)
             {
                 index.X = x;
                 index.Y = y;
@@ -121,10 +152,27 @@ void Grid::CollapseTile(const int x, const int y) const
     }
     
     NotTheGrid[x][y]->Collapsed = true;
+
+    std::srand(std::time(nullptr) + (x + 11) * 73 + y * 103); // use current time as seed for random generator (can't only use time because its too fast lol)
+    int totalWeight = 0;
+    for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
+    {
+        totalWeight += CellPossibilitie->Weight;
+    }
+
+    Tile* tile = nullptr;
+    int randIndex = std::rand() % totalWeight;
+    for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
+    {
+        randIndex -= CellPossibilitie->Weight;
+        if (randIndex <= 0)
+        {
+            tile = CellPossibilitie;
+            break;
+        }
+    }
     
-    std::srand(std::time(nullptr)); // use current time as seed for random generator
-    const int randIndex = std::rand() % NotTheGrid[x][y]->CellPossibilities.size();
-    NotTheGrid[x][y]->CollapsedTile = NotTheGrid[x][y]->CellPossibilities[randIndex];
+    NotTheGrid[x][y]->CollapsedTile = tile;
     
     NotTheGrid[x][y]->CellPossibilities.clear();
     NotTheGrid[x][y]->CellPossibilities.push_back(NotTheGrid[x][y]->CollapsedTile);
@@ -148,11 +196,53 @@ void Grid::SetCell(const int x, const int y, Tile* Tile) // Could implement flyw
     CellStack.push(Vector2Int(x, y));
 }
 
+bool Grid::OnlyOpenAt(const TileCell* changedCell)
+{
+    for (const auto element : changedCell->CellPossibilities)
+    {
+        if (element->ImagePath != "img/WFC/0_Open.png") 
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int Grid::GetAmountOpenAdjecentTiles(const Vector2Int& vector2_int) const
+{
+    int count = 0;
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            if (x != 0 && y != 0)
+            {
+                continue;
+            }
+            
+            const Vector2Int neighbourIndex = Vector2Int(vector2_int.X + x, vector2_int.Y + y);
+            if (neighbourIndex.X < 0 || neighbourIndex.X >= GridX || neighbourIndex.Y < 0 || neighbourIndex.Y >= GridY)
+            {
+                continue;
+            }
+
+            if (OnlyOpenAt(NotTheGrid[neighbourIndex.X][neighbourIndex.Y]))
+            {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
 void Grid::Propogate()
 {
     while (!CellStack.empty())
     {
-        const Vector2Int cellIndex = CellStack.top();
+        Vector2Int cellIndex = CellStack.top();
+        CellStack.pop();
 
         const TileCell* changedCell = NotTheGrid[cellIndex.X][cellIndex.Y];
 
@@ -167,8 +257,6 @@ void Grid::Propogate()
                 CellStack.push(neighbourIndex);
             }
         }
-
-        CellStack.pop();
     }
 }
 
@@ -205,6 +293,11 @@ std::vector<Vector2Int> Grid::ValidDirections(const Vector2Int& index)
 
 bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, const Vector2Int& direction) const
 {
+    if (changedCell)
+    {
+        
+    }
+    
     if (NotTheGrid[cellIndex.X][cellIndex.Y]->Collapsed)
     {
         return false;
@@ -212,32 +305,32 @@ bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, c
     
     // Direction is from the changedCell to the cellIndex
 
-    std::vector<std::string> ValidKeys = std::vector<std::string>();
+    std::set<std::string> ValidKeys = std::set<std::string>();
 
     for (const auto CellPossibilitie : changedCell->CellPossibilities)
     {
         // Left
         if (direction.X == -1)
         {
-            ValidKeys.emplace_back(CellPossibilitie->SideKeys[1]);
+            ValidKeys.emplace(CellPossibilitie->SideKeys[1]);
         }
 
         // Right
         if (direction.X == 1)
         {
-            ValidKeys.emplace_back(CellPossibilitie->SideKeys[3]);
+            ValidKeys.emplace(CellPossibilitie->SideKeys[3]);
         }
 
         // Down
         if (direction.Y == 1)
         {
-            ValidKeys.emplace_back(CellPossibilitie->SideKeys[2]);
+            ValidKeys.emplace(CellPossibilitie->SideKeys[2]);
         }
         
         // Up
         if (direction.Y == -1)
         {
-            ValidKeys.emplace_back(CellPossibilitie->SideKeys[0]);
+            ValidKeys.emplace(CellPossibilitie->SideKeys[0]);
         }
     }
 
@@ -260,6 +353,18 @@ bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, c
     if (direction.Y == -1)
         sideIndex = 2;
 
+    bool onlyOpenTileAvailable = false;// I hate this part
+    if (ValidKeys.size() == 1 && ValidKeys.contains("0s")) // If the only valid connection is 0s
+    {
+        for (const auto element : changedCell->CellPossibilities)
+        {
+            if (element->ImagePath != "img/WFC/0_Open.png") 
+            {
+                onlyOpenTileAvailable = true;
+            }
+        }
+    }
+
     for (int i = count - 1; i >= 0; i--)
     {
         if (!CheckValidSocket(NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->SideKeys[sideIndex], ValidKeys))
@@ -269,50 +374,33 @@ bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, c
             continue;
         }
 
-        //if (changedCell->Collapsed && ValidKeys[0] == "0s" && changedCell->CollapsedTile->ImagePath != "img/WFC/0_Open.png")
-        //{
-        //    if (NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->ImagePath != "img/WFC/0_Open.png")
-        //    {
-        //        NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities.erase(NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities.begin() + i);
-        //        changed = true;
-        //        continue;
-        //    }
-        //}
+        if (onlyOpenTileAvailable && NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->ImagePath == "img/WFC/0_Open.png")
+        {
+            NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->Weight = 10;
+            continue;
+        }
     }
     
     return changed;
 }
 
-bool Grid::CheckValidSocket(const std::string& key, const std::vector<std::string>& validKeys)
+bool Grid::CheckValidSocket(const std::string& key, const std::set<std::string>& validKeys)
 {
     if (key.length() == 1)
     {
         const std::string keyf = key + 'f';
-        return ContainsKey(validKeys, keyf);
+        return validKeys.contains(keyf);
     }
 
     if (key[1] == 's') // Ex. 0s
     {
-        return ContainsKey(validKeys, key);
+        return validKeys.contains(key);
     }
 
     if (key[1] == 'f') // Ex. 0f
     {
-        return ContainsKey(validKeys, key.substr(0, 1));
+        return validKeys.contains(key.substr(0, 1));
     }
     
-    return false;
-}
-
-bool Grid::ContainsKey(const std::vector<std::string>& array, const std::string& key)
-{
-    for (int i = 0; i < array.size(); i++)
-    {
-        if (array[i] == key)
-        {
-            return true;
-        }
-    }
-
     return false;
 }

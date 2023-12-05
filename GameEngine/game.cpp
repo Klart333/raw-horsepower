@@ -25,6 +25,7 @@ int main(int argc, char* args[])
 	
 	bool quit = false;
 	Uint32 lastFrameTicks = 0;
+	int gameSpeed = 200;
 	while (!quit)
 	{
 		Dependencies::instance()->Grid->Iterate();
@@ -36,6 +37,8 @@ int main(int argc, char* args[])
 		// Update InputManager
 		Dependencies::instance()->InputManager->Update();
 		quit = Dependencies::instance()->InputManager->Quit;
+		gameSpeed = std::ranges::max(0, gameSpeed + Dependencies::instance()->InputManager->Horizontal * 50);
+		//printf(std::to_string(gameSpeed).c_str());
 
 		const JohnsArray<GameObject> gameObjects = Dependencies::instance()->GameManager->GameObjects;
 		
@@ -62,14 +65,23 @@ int main(int argc, char* args[])
 				}
 				else
 				{
+					continue;
 					const int size = Dependencies::instance()->Grid->NotTheGrid[x][y]->CellPossibilities.size();
 					const int sqrtSize = sqrt(size) + 1;
 					for (int i = 0; i < size; i++)
 					{
-						const Tile* element = Dependencies::instance()->Grid->NotTheGrid[x][y]->CellPossibilities[i]; 
-						SDL_Texture* imag = imageLoader->LoadImage(element->ImagePath);
-						const SDL_Rect* rect = new SDL_Rect(x * CellSize + (i % sqrtSize) * CellSize / sqrtSize, y * CellSize + floor(i / sqrtSize) * CellSize / sqrtSize, CellSize / sqrtSize, CellSize / sqrtSize);
-						window.render(imag, rect, element->Angle);
+						Tile* element = Dependencies::instance()->Grid->NotTheGrid[x][y]->CellPossibilities[i]; 
+						if (element->StupidRect == nullptr)
+						{
+							element->StupidImage = imageLoader->LoadImage(element->ImagePath);
+							element->StupidRect = new SDL_Rect(0, 0, 0, 0);
+						}
+
+						element->StupidRect->x = x * CellSize + (i % sqrtSize) * CellSize / sqrtSize;
+						element->StupidRect->y = y * CellSize + floor(i / sqrtSize) * CellSize / sqrtSize;
+						element->StupidRect->w = CellSize / sqrtSize;
+						element->StupidRect->h = CellSize / sqrtSize;
+						window.render(element->StupidImage, element->StupidRect, element->Angle);
 					}
 				}
 			}
@@ -90,7 +102,7 @@ int main(int argc, char* args[])
 		// present screen (switch buffers)
 		SDL_RenderPresent(sdlWindow->get_Renderer());
 
-		SDL_Delay(20); // can be used to wait for a certain amount of ms
+		SDL_Delay(gameSpeed); // can be used to wait for a certain amount of ms
 	}
 
 	delete sdlWindow;
