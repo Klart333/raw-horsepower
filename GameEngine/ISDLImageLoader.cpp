@@ -4,6 +4,8 @@
 #include <SDL_image.h>
 #include <SDL_surface.h>
 
+std::map<const char*, SDL_Texture*> ISDLImageLoader::LoadedTextures = std::map<const char*, SDL_Texture*>();
+
 ISDLImageLoader::ISDLImageLoader(SDL_Renderer* renderer)
 {
     this->renderer = renderer; 
@@ -11,6 +13,11 @@ ISDLImageLoader::ISDLImageLoader(SDL_Renderer* renderer)
 
 SDL_Texture* ISDLImageLoader::LoadImage(const char* path)
 {
+    if (LoadedTextures.count(path) != 0)
+    {
+        return LoadedTextures[path];
+    }
+    
     SDL_Surface* loadedSurface = IMG_Load(path);
     if (loadedSurface == nullptr)
     {
@@ -29,7 +36,7 @@ SDL_Texture* ISDLImageLoader::LoadImage(const char* path)
 
         //Get rid of old loaded surface
         SDL_FreeSurface(loadedSurface);
-
+        LoadedTextures.insert(std::pair<const char*, SDL_Texture*>(path,pikachu));
         return pikachu;
     }
 }
