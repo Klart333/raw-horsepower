@@ -188,16 +188,16 @@ void Grid::SetCell(const int x, const int y, Tile* Tile) // Could implement flyw
         NotTheGrid[x][y]->CellPossibilities.clear();
         NotTheGrid[x][y]->CellPossibilities.push_back(NotTheGrid[x][y]->CollapsedTile);
     }
-    
-    const Image* img = Dependencies::instance()->Spawner->get_image(Tile->ImagePath, 0, Tile->Angle);
+
+    std::unique_ptr<Image> img = Dependencies::instance()->Spawner->get_image(Tile->ImagePath, 0, Tile->Angle);
     const bool walkable = Tile->ImagePath == "img/WFC/00_Open.png";
     const bool coin = walkable && rand() % 100 > 90;
-    const Image* coinImage = nullptr;
+    std::unique_ptr<Image> coinImage = nullptr;
     if (coin)
     {
         coinImage = Dependencies::instance()->Spawner->get_image(coinImagePath, 0, 0);
     }
-    TheGrid[x][y] = new Cell(walkable, coin, img, coinImage, x, y);
+    TheGrid[x][y] = new Cell(walkable, coin, std::move(img), std::move(coinImage), x, y);
 
     collapsedCount++;
     CellStack.push(Vector2Int(x, y));

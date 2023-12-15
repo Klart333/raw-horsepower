@@ -1,5 +1,6 @@
 #pragma once
-
+#include <memory>
+#include "Image.h"
 constexpr int CellSize = 24;
 
 class Image;
@@ -9,8 +10,8 @@ private:
    struct SDL_Rect* rect;
    
 public:
-    const Image* CoinImage;
-    const Image* Image;
+    std::unique_ptr<Image> CoinImage;
+    std::unique_ptr<Image> Image;
     
     bool Walkable;
     bool CointainsCoin;
@@ -23,12 +24,13 @@ public:
        Walkable = true;
    }
 
-    Cell(const bool walkable, const bool coin, const class Image* img, const class Image* coin_image, const int x, const int y): rect(nullptr)
+    Cell(const bool walkable, const bool coin, std::unique_ptr<class Image> img, std::unique_ptr<class Image> coin_image, const int x, const int y): rect(nullptr)
    {
         CointainsCoin = coin;
         Walkable = walkable;
-        Image = img;
-        CoinImage = coin_image;
+        
+        Image = std::move(img);
+        CoinImage = std::move(coin_image);
         X = x;
         Y = y;
    }

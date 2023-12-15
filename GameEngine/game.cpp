@@ -36,7 +36,7 @@ int main(int argc, char* args[])
 		const Uint32 ticks = SDL_GetTicks(); // can be used to see how much time in ms has passed since app start
 		const float deltaTime = (ticks - lastFrameTicks) / 1000.0f;
 		lastFrameTicks = ticks;
-
+		
 		// Update InputManager
 		Dependencies::instance()->InputManager->Update();
 		quit = Dependencies::instance()->InputManager->Quit;

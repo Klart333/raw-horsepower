@@ -1,5 +1,5 @@
-#include "Pikachu.h"
 
+#include "Pikachu.h"
 #include <cmath>
 
 #include "Cell.h"
@@ -7,14 +7,13 @@
 #include "Dependencies.h"
 #include "Grid.h"
 #include "InputManager.h"
-#include "Spawner.h"
 #include "Text.h"
 #include "Transform.h"
 
 const char* charmanderImagePath{"img/charmander.png"};
 
-Pikachu::Pikachu(class Transform* InTransform, class Image* InImage)
-    : GameObject(InTransform, InImage)
+Pikachu::Pikachu(class Transform* InTransform, std::unique_ptr<class Image> InImage)
+    : GameObject(InTransform, std::move(InImage))
 {
     CurrentCell = nullptr;
     Dependencies::instance()->InputManager->AddFunctionPointerToMouseButtonClicked(&Pikachu::CallbackFunction, this);

@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Vector2.h"
+#include "Image.h"
 
 struct Cell;
 
@@ -11,7 +12,7 @@ class Pikachu : public GameObject
     Vector2 Heading;
     
 public:
-    Pikachu(class Transform* InTransform, class Image* InImage);
+    Pikachu(class Transform* InTransform, std::unique_ptr<class Image> InImage);
     void UpdateCurrentCell();
     void UpdateRotation() const;
     void Update(float deltaTime) override;

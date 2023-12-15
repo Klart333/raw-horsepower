@@ -1,10 +1,12 @@
 #pragma once
+#include <memory>
 #include <SDL_stdinc.h>
 #include "Dependencies.h"
 #include "GameManager.h"
+#include "Image.h"
 
 class Text;
-class Image;
+//class Image;
 class Transform;
 class IDisplayWindow;
 class IImageLoader;
@@ -22,17 +24,17 @@ public:
     
     void InitializeGameState() const;
 
-    Image* get_image(const char* filePath, int renderOrder = 0, int angle = 0) const;
+    std::unique_ptr<Image> get_image(const char* filePath, int renderOrder = 0, int angle = 0) const;
     Text* get_text(const char* textString, const char* fontPath, Uint8 r = 255, Uint8 g = 255, Uint8 b = 255) const;
 
     template<typename T>
-    static T* Instantiate(Transform* InTransform, Image* InImage); 
+    static T* Instantiate(Transform* InTransform, std::unique_ptr<Image> InImage); 
 };
 
 template<typename T>
-T* Spawner::Instantiate(Transform* InTransform, Image* InImage)
+T* Spawner::Instantiate(Transform* InTransform, std::unique_ptr<Image> InImage)
 {
-    T* object = new T(InTransform, InImage);
+    T* object = new T(InTransform, std::move(InImage));
     
     Dependencies::instance()->GameManager->AddGameObject(object);
     

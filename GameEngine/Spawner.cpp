@@ -1,4 +1,7 @@
 #include "Spawner.h"
+
+#include <memory>
+
 #include "Font.h"
 #include "IDisplayWindow.h"
 #include "Pikachu.h"
@@ -34,9 +37,9 @@ void Spawner::InitializeGameState() const
     //    text);
 }
 
-Image* Spawner::get_image(const char* filePath, const int renderOrder, const int angle) const
+std::unique_ptr<Image> Spawner::get_image(const char* filePath, const int renderOrder, const int angle) const
 {
-    return new Image(filePath, renderOrder, angle);
+    return std::make_unique<Image>(filePath, renderOrder, angle);
 }
 
 Text* Spawner::get_text(const char* textString, const char* fontPath, Uint8 r, Uint8 g, Uint8 b) const
