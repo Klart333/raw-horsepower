@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector2.h"
 
-class SDL_Rect;
+struct SDL_Rect;
 
 class Transform
 {
@@ -14,6 +14,7 @@ public:
     float PosY;
     int Width;
     int Height;
+    int Rotation = 0;
 
     void Move(float x, float y);
     void Move(Vector2 vector);
@@ -21,5 +22,6 @@ public:
     void SetPosition(Vector2 pos);
     void SetScale(int width, int height);
 
+    [[nodiscard]]
     SDL_Rect* getRect() const;
 };

@@ -7,12 +7,13 @@ struct Cell;
 
 class Pikachu : public GameObject
 {
-    Vector2 velocity;
     Cell* CurrentCell;
+    Vector2 Heading;
     
 public:
     Pikachu(class Transform* InTransform, class Image* InImage);
     void UpdateCurrentCell();
+    void UpdateRotation() const;
     void Update(float deltaTime) override;
 
     void Shoot() const;

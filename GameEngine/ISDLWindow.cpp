@@ -1,8 +1,10 @@
 #include "ISDLWindow.h"
-
 #include <cstdio>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+
+constexpr int SCREEN_WIDTH = 1920;
+constexpr int SCREEN_HEIGHT = 1080;
 
 ISDLWindow::ISDLWindow(int screenWidth, int screenHeight)
 {
@@ -10,7 +12,7 @@ ISDLWindow::ISDLWindow(int screenWidth, int screenHeight)
     window = {};
 
     // initialize SDL_Image for image loading
-    int imgFlags = IMG_INIT_PNG;
+    constexpr int imgFlags = IMG_INIT_PNG;
     if (!(IMG_Init(imgFlags) & imgFlags))
     {
         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
@@ -39,7 +41,7 @@ ISDLWindow::ISDLWindow(int screenWidth, int screenHeight)
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
-    SDL_RenderSetLogicalSize(renderer, 1024, 768);
+    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 SDL_Window* ISDLWindow::get_window()

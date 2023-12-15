@@ -53,8 +53,8 @@ struct TileCell
     }
 };
 
-constexpr int GridX = 64;
-constexpr int GridY = 44;
+constexpr int GridX = 80;
+constexpr int GridY = 45;
 
 class Grid
 {
@@ -69,17 +69,13 @@ public:
     Cell* TheGrid[GridX][GridY]{};
     Grid();
 
-    void Iterate();
+    bool Iterate();
     [[nodiscard]] Vector2Int GetLowestEntropy() const;
     void CollapseTile(int x, int y) const;
     void SetCell(int x, int y, Tile* Tile);
-    static bool OnlyOpenAt(const TileCell* changedCell);
-    int GetAmountOpenAdjecentTiles(const Vector2Int& vector2_int) const;
     void Propogate();
     static std::vector<Vector2Int> ValidDirections(const Vector2Int& index);
     bool Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, const Vector2Int& direction) const;
     static bool CheckValidSocket(const std::string& key, const std::set<std::string>& validKeys);
-
-    static bool ContainsKey(const std::vector<std::string>& array, const std::string& key);
     void GenerateGrid();
 };

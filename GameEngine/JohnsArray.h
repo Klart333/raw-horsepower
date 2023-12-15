@@ -108,7 +108,6 @@ void JohnsArray<T>::AddAt(T* object, int index) // OK ONLY USE IF YOU KNOW WHAT 
 {
     if (index < 0 || index >= capacity)
     {
-        //printf("fuck off dude");
         return;
     }
 
@@ -126,5 +125,5 @@ template <typename T>
 void JohnsArray<T>::RemoveAtButIDontCareAboutOrder(int index)
 {
     Array[index] = Array[count - 1]; // looooool
-    count--; 
+    count--; // jokes on me this didnt work, dont really know why...
 }

@@ -16,10 +16,11 @@ class Spawner
     
 public:
     Spawner();
+    void InitializeInterfaces(IImageLoader* imageLoader, IDisplayWindow* displayWindow);
 
     IImageLoader* image_loader; 
     
-    void InitializeGameState(IImageLoader*, IDisplayWindow*);
+    void InitializeGameState() const;
 
     Image* get_image(const char* filePath, int renderOrder = 0, int angle = 0) const;
     Text* get_text(const char* textString, const char* fontPath, Uint8 r = 255, Uint8 g = 255, Uint8 b = 255) const;

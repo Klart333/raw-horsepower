@@ -1,24 +1,24 @@
-#include <ctime>
-#include "Grid.h"
+const char* coinImagePath{"img/coin.png"};
 
-#include <set>
-
-#include "Cell.h"
 #include "Dependencies.h"
 #include "Spawner.h"
+#include "Grid.h"
+#include "Cell.h"
+#include <ctime>
+#include <set>
 
 Grid::Grid()
 {
     TileArray = std::vector<Tile*>(36);
-    TileArray[0 ] = new Tile("0s", "0s", "0s", "0s", "img/WFC/00_Open.png",               0, 10); 
-    TileArray[4 ] = new Tile("1s", "1s", "1s", "1s", "img/WFC/01_Wall.png",               0, 3);
-    TileArray[8 ] = new Tile("2" , "1s", "2f", "0s", "img/WFC/02_SideWall.png",           0, 5);
+    TileArray[0 ] = new Tile("0s", "0s", "0s", "0s", "img/WFC/00_Open.png",               0, 8); 
+    TileArray[4 ] = new Tile("1s", "1s", "1s", "1s", "img/WFC/01_Wall.png",               0, 6);
+    TileArray[8 ] = new Tile("2" , "1s", "2f", "0s", "img/WFC/02_SideWall.png",           0, 6);
     TileArray[12] = new Tile("2" , "2f", "0s", "0s", "img/WFC/03_WallCorner.png",         0, 5);
-    TileArray[16] = new Tile("2" , "1s", "1s", "2f", "img/WFC/04_DumbCorner.png",         0, 3);
-    TileArray[20] = new Tile("0s", "3s", "0s", "0s", "img/WFC/06_WallSuperCorner.png",    0, 5);  
-    TileArray[24] = new Tile("3s", "0s", "3s", "0s", "img/WFC/07_DoubleWall.png",         0, 4); 
-    TileArray[28] = new Tile("3s", "3s", "3s", "3s", "img/WFC/08_SuperSuperCorner.png",   0, 4);
-    TileArray[32] = new Tile("2f", "3s", "2" , "1s", "img/WFC/09_PartialSuperCorner.png", 0, 3);
+    TileArray[16] = new Tile("2" , "1s", "1s", "2f", "img/WFC/04_DumbCorner.png",         0, 5);
+    TileArray[20] = new Tile("0s", "3s", "0s", "0s", "img/WFC/06_WallSuperCorner.png",    0, 3);  
+    TileArray[24] = new Tile("3s", "0s", "3s", "0s", "img/WFC/07_DoubleWall.png",         0, 1); 
+    TileArray[28] = new Tile("3s", "3s", "3s", "3s", "img/WFC/08_SuperSuperCorner.png",   0, 1);
+    TileArray[32] = new Tile("2f", "3s", "2" , "1s", "img/WFC/09_PartialSuperCorner.png", 0, 2);
 
     for (int i = 0; i <= 8 * 4; i+= 4)
     {
@@ -56,19 +56,13 @@ void Grid::GenerateGrid()
     SetCell(middleIndexX + 1, middleIndexY - 1, TileArray[12 + 2]);
 
     Propogate();
-
-    if (collapsedCount < GridX * GridY)
-    {
-        Iterate();
-    }
 }
 
-
-void Grid::Iterate()
+bool Grid::Iterate()
 {
     if (collapsedCount >= GridX * GridY)
     {
-        return;
+        return true;
     }
     
     const Vector2Int index = GetLowestEntropy();
@@ -84,11 +78,13 @@ void Grid::Iterate()
 
         TileArray.clear();
     }
+
+    return false;
 }
 
 Vector2Int Grid::GetLowestEntropy() const
 {
-    int smallest = 100;
+    int smallest = 1024;
     Vector2Int index = Vector2Int();
     for (int x = 0; x < GridX; x++)
     {
@@ -102,22 +98,26 @@ Vector2Int Grid::GetLowestEntropy() const
             }
 
             float entropy = 0;
-            //int totalWeight = 0;
-            //for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
-            //{
-            //    totalWeight += CellPossibilitie->Weight;
-            //}
-
-            //for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
-            //{
-            //    entropy += 1.0f - ((CellPossibilitie->Weight - 1.0f) / totalWeight);
-
-            //}
+            int totalWeight = 0;
+            for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
+            {
+                totalWeight += CellPossibilitie->Weight;
+            }
 
             for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
             {
-                entropy -= CellPossibilitie->Weight / size;
+                entropy += 1.0f - ((CellPossibilitie->Weight - 1.0f) / totalWeight);
+
             }
+
+            // Remove entropy for being in the center
+            entropy += abs(x - GridX / 2.0f) / 12;
+            entropy += abs(y - GridY / 2.0f) / 12;
+            
+            //for (const auto& CellPossibilitie : NotTheGrid[x][y]->CellPossibilities)
+            //{
+            //    entropy -= CellPossibilitie->Weight / size;
+            //}
             
             if (entropy < smallest)
             {
@@ -190,51 +190,17 @@ void Grid::SetCell(const int x, const int y, Tile* Tile) // Could implement flyw
     }
     
     const Image* img = Dependencies::instance()->Spawner->get_image(Tile->ImagePath, 0, Tile->Angle);
-    TheGrid[x][y] = new Cell(false, img, x, y);
+    const bool walkable = Tile->ImagePath == "img/WFC/00_Open.png";
+    const bool coin = walkable && rand() % 100 > 90;
+    const Image* coinImage = nullptr;
+    if (coin)
+    {
+        coinImage = Dependencies::instance()->Spawner->get_image(coinImagePath, 0, 0);
+    }
+    TheGrid[x][y] = new Cell(walkable, coin, img, coinImage, x, y);
 
     collapsedCount++;
     CellStack.push(Vector2Int(x, y));
-}
-
-bool Grid::OnlyOpenAt(const TileCell* changedCell)
-{
-    for (const auto element : changedCell->CellPossibilities)
-    {
-        if (element->ImagePath != "img/WFC/0_Open.png") 
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-int Grid::GetAmountOpenAdjecentTiles(const Vector2Int& vector2_int) const
-{
-    int count = 0;
-    for (int x = -1; x <= 1; x++)
-    {
-        for (int y = -1; y <= 1; y++)
-        {
-            if (x != 0 && y != 0)
-            {
-                continue;
-            }
-            
-            const Vector2Int neighbourIndex = Vector2Int(vector2_int.X + x, vector2_int.Y + y);
-            if (neighbourIndex.X < 0 || neighbourIndex.X >= GridX || neighbourIndex.Y < 0 || neighbourIndex.Y >= GridY)
-            {
-                continue;
-            }
-
-            if (OnlyOpenAt(NotTheGrid[neighbourIndex.X][neighbourIndex.Y]))
-            {
-                count++;
-            }
-        }
-    }
-
-    return count;
 }
 
 void Grid::Propogate()
@@ -293,11 +259,6 @@ std::vector<Vector2Int> Grid::ValidDirections(const Vector2Int& index)
 
 bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, const Vector2Int& direction) const
 {
-    if (changedCell)
-    {
-        
-    }
-    
     if (NotTheGrid[cellIndex.X][cellIndex.Y]->Collapsed)
     {
         return false;
@@ -358,7 +319,7 @@ bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, c
     {
         for (const auto element : changedCell->CellPossibilities)
         {
-            if (element->ImagePath != "img/WFC/0_Open.png") 
+            if (element->ImagePath != "img/WFC/00_Open.png") 
             {
                 onlyOpenTileAvailable = true;
             }
@@ -374,9 +335,9 @@ bool Grid::Constrain(const TileCell* changedCell, const Vector2Int& cellIndex, c
             continue;
         }
 
-        if (onlyOpenTileAvailable && NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->ImagePath == "img/WFC/0_Open.png")
+        if (onlyOpenTileAvailable && NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->ImagePath == "img/WFC/00_Open.png")
         {
-            NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->Weight = 10;
+            NotTheGrid[cellIndex.X][cellIndex.Y]->CellPossibilities[i]->Weight = 15;
             continue;
         }
     }

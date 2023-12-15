@@ -19,14 +19,18 @@ Window::~Window()
     
 }
 
-void Window::render(GameObject* gameObject) const
+void Window::render(const GameObject* gameObject) const
 {
-    SDL_RenderCopy(window->get_Renderer(), gameObject->Image->getTexture(), nullptr, gameObject->Transform->getRect());
+    SDL_RenderCopyEx(window->get_Renderer(), gameObject->Image->getTexture(), nullptr, gameObject->Transform->getRect(), gameObject->Transform->Rotation * 90, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
 }
 
 void Window::render(Cell* cell) const
 {
     SDL_RenderCopyEx(window->get_Renderer(), cell->Image->getTexture(), nullptr, cell->GetRect(), cell->Image->AngleDeg, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
+    if (cell->CointainsCoin)
+    {
+        SDL_RenderCopy(window->get_Renderer(), cell->CoinImage->getTexture(), nullptr, cell->GetRect());
+    }
 }
 
 void Window::render(SDL_Texture* img, const SDL_Rect* rect, int angle) const

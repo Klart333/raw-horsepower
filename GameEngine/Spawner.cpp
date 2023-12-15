@@ -1,5 +1,4 @@
 #include "Spawner.h"
-
 #include "Font.h"
 #include "IDisplayWindow.h"
 #include "Pikachu.h"
@@ -14,18 +13,21 @@ Spawner::Spawner()
     display_window = nullptr;
 }
 
-void Spawner::InitializeGameState(IImageLoader* imageLoader, IDisplayWindow* displayWindow)
+void Spawner::InitializeInterfaces(IImageLoader* imageLoader, IDisplayWindow* displayWindow)
 {
     image_loader = imageLoader;
     display_window = displayWindow;
+}
 
+void Spawner::InitializeGameState() const
+{
     // All data related to pikachu
-    //GameObject* Pickachu = Spawner::Instantiate<Pikachu>(
-    //    new Transform(250, 250, 200, 200),
-    //    get_image(pikachuImagePath, 1));
+    GameObject* Pickachu = Spawner::Instantiate<Pikachu>(
+        new Transform(1920 / 2, 1080 / 2, 20, 20),
+        get_image(pikachuImagePath, 1));
 
     // create text from font
-    Text* text = get_text("lazy blah blah", "font/lazy.ttf", 255, 255, 255);
+    //Text* text = get_text("lazy blah blah", "font/lazy.ttf", 255, 255, 255);
 
     //GameObject* TextObject = Spawner::Instantiate<GameObject>(
     //    new Transform(200, 400, text->textWidth, text->textHeight),
