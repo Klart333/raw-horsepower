@@ -4,9 +4,8 @@ The game is something in the style of pacman where you control a coin-eating cir
 
 The project is made as a prototype to learn and experiment with different design patterns. The following were implemented:
 
-- Observer -
-
-A custom C++ event was made with function pointers to send callbacks for when the left mouse button is pressed. 
+- Observer
+  A custom C++ event was made with function pointers to send callbacks for when the left mouse button is pressed. 
 
 - Flyweight
 Flyweight was used to reduce the memory usage of the map generation and instantiation. A lot of identical tiles are placed with different positions, for this new textures don't need to be created for each thus reducing memory.
