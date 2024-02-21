@@ -1,1 +1,1 @@
-# marczaku-214-design-patterns-assignment
+# Wave function collapse (with a side of pacman)
